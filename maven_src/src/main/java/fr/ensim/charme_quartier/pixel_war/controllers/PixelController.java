@@ -1,6 +1,8 @@
 package fr.ensim.charme_quartier.pixel_war.controllers;
 
+import fr.ensim.charme_quartier.pixel_war.model.Worker;
 import fr.ensim.charme_quartier.pixel_war.service.AuthentifierService;
+import fr.ensim.charme_quartier.pixel_war.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -15,15 +17,22 @@ public class PixelController {
     @Autowired
     AuthentifierService as;
 
+    @Autowired
+    WorkerService ws;
+
     @GetMapping("/")
     public String putPixel(RestTemplate restTemplate) {
-        String url = "http://149.202.79.34:8085/api/equipes";
+
         String token = as.getToken(restTemplate);
+        int teamId = as.getTeamId(restTemplate, "Le charme du quartier", token);
+        Worker[] workers = ws.getWorkersOf(restTemplate, token, teamId);
 
         HttpHeaders h = new org.springframework.http.HttpHeaders();
         h.setBearerAuth(token);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(h), String.class);
+        String url = "http://149.202.79.34:8085/api/equipes/"+ teamId +"/workers/"+ workers[0].getId() + "/pixel";
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(h), String.class);
 
         return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
     }

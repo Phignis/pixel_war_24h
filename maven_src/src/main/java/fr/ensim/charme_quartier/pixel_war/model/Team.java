@@ -4,6 +4,8 @@ public class Team {
     private int id;
     private String nom;
 
+    private Worker[] workers;
+
     public int getId() {
         return id;
     }
@@ -18,5 +20,13 @@ public class Team {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public Worker[] getWorkers() {
+        return workers;
+    }
+
+    public void setWorkers(Worker[] workers) {
+        this.workers = workers;
     }
 }
