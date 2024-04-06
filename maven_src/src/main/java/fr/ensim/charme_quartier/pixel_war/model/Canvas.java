@@ -1,4 +1,4 @@
-package fr.ensim.charme_quartier.pixel_war.Model;
+package fr.ensim.charme_quartier.pixel_war.model;
 
 import java.util.List;
 

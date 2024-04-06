@@ -1,4 +1,4 @@
-package fr.ensim.charme_quartier.pixel_war.Model;
+package fr.ensim.charme_quartier.pixel_war.model;
 
 public class Pixel {
     private String _id;
