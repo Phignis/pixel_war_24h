@@ -20,4 +20,14 @@ public class WorkerService {
         if(response.getBody() == null) throw new IllegalStateException("response is null");
         return response.getBody().getWorkers();
     }
+    public Worker getWorkerStat(RestTemplate restTemplate, String token, int teamId, int workerid) throws IllegalStateException {
+        String url = "http://149.202.79.34:8085/api/equipes/" + teamId+"/workers/" + workerid;
+        HttpHeaders h = new org.springframework.http.HttpHeaders();
+        h.setBearerAuth(token);
+
+        ResponseEntity<Worker> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(h), Worker.class);
+        if(response.getBody() == null) throw new IllegalStateException("response is null");
+        return response.getBody();
+    }
+
 }

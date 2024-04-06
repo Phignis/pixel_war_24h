@@ -1,6 +1,8 @@
 package fr.ensim.charme_quartier.pixel_war.model;
 
 import java.lang.reflect.Type;
+import java.time.Duration;
+import java.time.Instant;
 
 public class Worker {
     private int id;
@@ -41,5 +43,17 @@ public class Worker {
 
     public void setType(WorkerType type) {
         this.type = type;
+    }
+
+    public boolean IsOnCooldown(){
+        Instant now = Instant.now();
+        if(getDateDernierPixelPose() == null){
+            return false;
+        }
+
+        if(Instant.parse(getDateDernierPixelPose()).plus(Duration.ofSeconds(type.getCooldown())).isAfter(now)){
+            return true;
+        }
+        return true;
     }
 }
