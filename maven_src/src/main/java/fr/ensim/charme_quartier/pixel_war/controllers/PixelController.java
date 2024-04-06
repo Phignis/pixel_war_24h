@@ -45,9 +45,7 @@ public class PixelController {
         model.addAttribute("colors", EUseableColors.getAllColors());
         return "index";
     }
-    
-    // TODO: change variable name!!!!!
-    // public String putPixel(RestTemplate restTemplate, int X, int Y, String PixelColor) {
+
     @PostMapping("/pixel")
     public String putPixel(@RequestParam(name="x_coord", required = true) int xCoord,
                            @RequestParam(name="y_coord", required = true) int yCoord,
@@ -59,7 +57,7 @@ public class PixelController {
         int teamId = as.getTeamId(restTemplate, "Le charme du quartier", token);
         Worker[] workers = ws.getWorkersOf(restTemplate, token, teamId);
 
-        HttpHeaders h = new org.springframework.http.HttpHeaders();
+        HttpHeaders h = new HttpHeaders();
         h.setBearerAuth(token);
         h.add("Content-Type", MediaType.APPLICATION_JSON.toString());
 
@@ -86,9 +84,9 @@ public class PixelController {
 
         body.put("canvas", canva.getNom());
         body.put("chunk", chunkId);
-        body.put("color", PixelColor);
-        body.put("pos_x", X);
-        body.put("pos_y", Y);
+        body.put("color", color);
+        body.put("pos_x", xCoord);
+        body.put("pos_y", yCoord);
 
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(body, h), String.class);
         return response.getBody();
@@ -110,9 +108,9 @@ public class PixelController {
             for (int x = 0; x < recoloredToPrint.getWidth(); x++) {
                 int rgb = recoloredToPrint.getRGB(x, y);
                 Color pixelColor = new Color(rgb);
-                String colorName = EUseableColors.findColorName(pixelColor);
+                EUseableColors colorName = EUseableColors.getEUseableColors(pixelColor);
                 System.out.println("Pixel at (" + x + ", " + y + ") has color: " + colorName);
-                lastState = putPixel(restTemplate, x, y, colorName);
+                lastState = putPixel(x, y, colorName, restTemplate);
             }
         }
 
