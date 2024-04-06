@@ -1,7 +1,9 @@
 package fr.ensim.charme_quartier.pixel_war.controllers;
 
+import fr.ensim.charme_quartier.pixel_war.model.Canvas;
 import fr.ensim.charme_quartier.pixel_war.model.Worker;
 import fr.ensim.charme_quartier.pixel_war.service.AuthentifierService;
+import fr.ensim.charme_quartier.pixel_war.service.CanvasService;
 import fr.ensim.charme_quartier.pixel_war.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -20,6 +22,9 @@ public class PixelController {
     @Autowired
     WorkerService ws;
 
+    @Autowired
+    CanvasService cs;
+
     @GetMapping("/")
     public String putPixel(RestTemplate restTemplate) {
 
@@ -34,7 +39,17 @@ public class PixelController {
 
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(h), String.class);
 
-        return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
+        Canvas canva = cs.getCanvaOf(restTemplate, token);
+
+        return canva.getNom();
+
+
+
+        //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
+
+
+
+
     }
 
     @GetMapping("/token")
