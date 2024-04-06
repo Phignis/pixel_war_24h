@@ -79,4 +79,7 @@ public enum EUseableColors {
         return "black";
     }
 
+    public static EUseableColors[] getAllColors() {
+        return values();
+    }
 }
