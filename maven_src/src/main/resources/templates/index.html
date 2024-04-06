@@ -9,7 +9,10 @@
     <form method="post" action="/pixel">
         <input id="x_coord" name="x_coord" value="0">
         <input id="y_coord" name="y_coord" value="0">
-        <input id="color" name="color" value="0">
+        <div th:each="color:${colors}">
+            <input name="color" type="radio" th:value="${color}">
+            <div th:text="${color}"></div>
+        </div>
         <button type="submit">SUBMIT</button>
     </form>
 </body>

@@ -71,10 +71,7 @@ public enum EUseableColors {
         return value;
     }
 
-    public EUseableColors getFromString(String colorName) {
-        for(EUseableColors eu : values()) {
-            if(eu.key.equals(colorName)) return eu;
-        }
-        return null;
+    public static EUseableColors[] getAllColors() {
+        return values();
     }
 }

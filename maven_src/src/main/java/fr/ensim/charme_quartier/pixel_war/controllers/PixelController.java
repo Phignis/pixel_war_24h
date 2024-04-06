@@ -10,6 +10,7 @@ import fr.ensim.charme_quartier.pixel_war.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,9 @@ public class PixelController {
     CanvasService cs;
 
     @GetMapping("/")
-    public String displayHome() {
+    public String displayHome(Model model) {
+
+        model.addAttribute("colors", EUseableColors.getAllColors());
         return "index";
     }
 
@@ -69,7 +72,7 @@ public class PixelController {
 
         body.put("canvas", canva.getNom());
         body.put("chunk", chunkId);
-        body.put("color",  color);
+        body.put("color",  color.getKey());
         body.put("pos_x", xCoord);
         body.put("pos_y", yCoord);
         System.out.println(body.toString());
