@@ -8,10 +8,10 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <table>
         <tr th:each="i: ${#numbers.sequence(1, ${canvas.taille_x})}">
-            <td th:style="|background-color: ${pixel.color}|"></td> <!-- ou background -->
-            <td th:each=""
+            <th:block th:each="i: ${#numbers.sequence(1, ${canvas.taille_y})}">
+                <td th:style="|background-color: ${pixel.color}|"></td> <!-- ou background -->
+            </th:block>
         </tr>
-
     </table>
 </body>
 </html>
