@@ -18,15 +18,16 @@ public class PixelController {
     @GetMapping("/")
     public String putPixel(RestTemplate restTemplate) {
         String url = "http://149.202.79.34:8085/api/equipes";
-        String token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ6MktTejRUcWdvMHkzQzZ3czBoRmQ2cXBjV241WEdueWRpUThRUWQtWWNzIn0";
+        String token = as.getToken(restTemplate);
 
         HttpHeaders h = new org.springframework.http.HttpHeaders();
         h.setBearerAuth(token);
 
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(h), String.class);
 
-        return "test";
+        return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
     }
+
     @GetMapping("/token")
     public String getToken(RestTemplate restTemplate){
         return as.getToken(restTemplate);
