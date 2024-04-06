@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ddafe68-687e-49d0-a429-a4c4567d4a7a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/maven_src/src/main/java/fr/ensim/charme_quartier/pixel_war/Controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/maven_src/src/main/java/fr/ensim/charme_quartier/pixel_war/Controller/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maven_src/src/main/java/fr/ensim/charme_quartier/pixel_war/model/Worker.java" beforeDir="false" afterPath="$PROJECT_DIR$/maven_src/src/main/java/fr/ensim/charme_quartier/pixel_war/model/Worker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maven_src/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/maven_src/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,24 +36,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;2-add-first-pixel-with-api&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/steva/Desktop/24hducode/pixel_war_24h&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "4-transform-an-image-into-pixel-array",
+    "last_opened_file_path": "C:/Users/steva/Desktop/24hducode/pixel_war_24h/maven_src",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="fr.ensim.charme_quartier.pixel_war.model" />
@@ -112,6 +117,9 @@
       <option name="presentableId" value="Default" />
       <updated>1712396922961</updated>
       <workItem from="1712396924003" duration="24682000" />
+      <workItem from="1712429182393" duration="86000" />
+      <workItem from="1712429304793" duration="104000" />
+      <workItem from="1712429772752" duration="62000" />
     </task>
     <servers />
   </component>

@@ -54,6 +54,8 @@ public class Worker {
         if(Instant.parse(getDateDernierPixelPose()).plus(Duration.ofSeconds(type.getCooldown())).isAfter(now)){
             return true;
         }
-        return true;
+        else{
+            return false;
+        }
     }
 }
