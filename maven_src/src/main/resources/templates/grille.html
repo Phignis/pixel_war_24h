@@ -5,6 +5,11 @@
     <title>Pixel War</title>
 </head>
 <body>
-<div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <table>
+        <tr th:each="pixel: ${chunk}">
+            <td th:style="|background-color: ${task.color}|"></td> <!-- ou background -->
+        </tr>
+    </table>
 </body>
 </html>
