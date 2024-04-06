@@ -9,6 +9,7 @@ public class Canvas {
     private int taille_y;
     private int taille_chunk_x;
     private int taille_chunk_y;
+  
     private List<Chunk> chunks;
 
     public int getId() {
