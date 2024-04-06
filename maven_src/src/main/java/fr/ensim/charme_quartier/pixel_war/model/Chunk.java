@@ -6,7 +6,6 @@ public class Chunk {
     private int pos_x;
     private int pos_y;
     private String type;
-
     private int equipeProprietaire;
 
     public int getId() {

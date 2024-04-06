@@ -3,14 +3,13 @@ package fr.ensim.charme_quartier.pixel_war.model;
 import java.util.List;
 
 public class Canvas {
-
     private int id;
     private String nom;
     private int taille_x;
     private int taille_y;
     private int taille_chunk_x;
     private int taille_chunk_y;
-
+  
     private List<Chunk> chunks;
 
     public int getId() {

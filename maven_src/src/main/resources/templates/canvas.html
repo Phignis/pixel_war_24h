@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pixel War</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <table>
+        <tr th:each="i: ${#numbers.sequence(1, ${canvas.taille_x})}">
+            <th:block th:each="i: ${#numbers.sequence(1, ${canvas.taille_y})}">
+                <td th:style="|background-color: ${pixel.color}|"></td> <!-- ou background -->
+            </th:block>
+        </tr>
+    </table>
+</body>
+</html>
