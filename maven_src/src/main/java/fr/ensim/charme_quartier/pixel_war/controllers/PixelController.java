@@ -2,6 +2,7 @@ package fr.ensim.charme_quartier.pixel_war.controllers;
 
 import fr.ensim.charme_quartier.pixel_war.model.Canvas;
 import fr.ensim.charme_quartier.pixel_war.model.Chunk;
+import fr.ensim.charme_quartier.pixel_war.model.EUseableColors;
 import fr.ensim.charme_quartier.pixel_war.model.Worker;
 import fr.ensim.charme_quartier.pixel_war.service.AuthentifierService;
 import fr.ensim.charme_quartier.pixel_war.service.CanvasService;
@@ -11,14 +12,13 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-@RestController
+@Controller
 public class PixelController {
     @Autowired
     AuthentifierService as;
@@ -30,7 +30,15 @@ public class PixelController {
     CanvasService cs;
 
     @GetMapping("/")
-    public String putPixel(RestTemplate restTemplate) {
+    public String displayHome() {
+        return "index";
+    }
+
+    @PostMapping("/pixel")
+    public String putPixel(@RequestParam(name="x_coord", required = true) int xCoord,
+                           @RequestParam(name="y_coord", required = true) int yCoord,
+                           @RequestParam(name="color", required = true) EUseableColors color,
+                           RestTemplate restTemplate) {
 
         String token = as.getToken(restTemplate);
         int teamId = as.getTeamId(restTemplate, "Le charme du quartier", token);
@@ -61,26 +69,19 @@ public class PixelController {
 
         body.put("canvas", canva.getNom());
         body.put("chunk", chunkId);
-        body.put("color", "black");
-        body.put("pos_x", 28);
-        body.put("pos_y", 25);
+        body.put("color",  color);
+        body.put("pos_x", xCoord);
+        body.put("pos_y", yCoord);
+        System.out.println(body.toString());
 
-        System.out.println("hey");
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(body, h), String.class);
-        System.out.println("finit");
         return response.getBody();
-
-
-
-        //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
-
-
-
-
     }
 
     @GetMapping("/token")
     public String getToken(RestTemplate restTemplate){
         return as.getToken(restTemplate);
     }
+
+
 }

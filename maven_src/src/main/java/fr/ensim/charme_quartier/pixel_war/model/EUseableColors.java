@@ -3,11 +3,11 @@ package fr.ensim.charme_quartier.pixel_war.model;
 import java.awt.*;
 
 public enum EUseableColors {
-    RED("Red", new int[]{255, 0, 0}),
-    BLACK("Black", new int[]{0, 0, 0}),
-    WHITE("White", new int[]{255, 255, 255}),
-    DEEP_BLACK("Deep Black", new int[]{13, 23, 31}),
-    DEEP_BLUE("Deep Blue", new int[]{46, 70, 89}),
+    RED("red", new int[]{255, 0, 0}),
+    BLACK("black", new int[]{0, 0, 0}),
+    WHITE("white", new int[]{255, 255, 255}),
+    DEEP_BLACK("deep_black", new int[]{13, 23, 31}),
+    DEEP_BLUE("deep_blue", new int[]{46, 70, 89}),
     BLUE_GREY("Blue Grey", new int[]{67, 93, 115}),
     GREY_BLUE("Grey Blue", new int[]{94, 120, 140}),
     BLUISH_GREY("Bluish Grey", new int[]{122, 149, 167}),
@@ -69,5 +69,12 @@ public enum EUseableColors {
 
     public Color getValue() {
         return value;
+    }
+
+    public EUseableColors getFromString(String colorName) {
+        for(EUseableColors eu : values()) {
+            if(eu.key.equals(colorName)) return eu;
+        }
+        return null;
     }
 }
