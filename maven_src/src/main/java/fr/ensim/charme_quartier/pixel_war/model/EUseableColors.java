@@ -79,6 +79,15 @@ public enum EUseableColors {
         return "black";
     }
 
+    public static EUseableColors getEUseableColors(Color c) {
+        for (EUseableColors ec : EUseableColors.values()) {
+            if(ec.value.getRGB() == c.getRGB() ){
+                return ec;
+            }
+        }
+        return null;
+    }
+
     public static EUseableColors[] getAllColors() {
         return values();
     }
