@@ -1,9 +1,11 @@
-package fr.ensim.charme_quartier.pixel_war.model;
+package fr.ensim.charme_quartier.pixel_war.utils;
+
+import fr.ensim.charme_quartier.pixel_war.model.EUseableColors;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class ImageModifier {
+public class ImageUtils {
 
     public static BufferedImage resizeImage(Image originalImage, int targetWidth, int targetHeight) {
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
@@ -14,10 +16,11 @@ public class ImageModifier {
     }
 
     public static BufferedImage recolor(BufferedImage originalImage) {
-        BufferedImage recoloredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage recoloredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(),
+                BufferedImage.TYPE_INT_RGB);
 
-        for (int y = 0; y < originalImage.getHeight(); y++) {
-            for (int x = 0; x < originalImage.getWidth(); x++) {
+        for (int y = 0; y < originalImage.getHeight(); ++y) {
+            for (int x = 0; x < originalImage.getWidth(); ++x) {
                 int rgb = originalImage.getRGB(x, y);
                 Color pixelColor = new Color(rgb);
                 Color nearestColor = findNearestColor(pixelColor);

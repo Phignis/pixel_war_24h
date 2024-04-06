@@ -28,4 +28,12 @@ public class WorkerType {
     public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
     }
+
+    public WorkerType copy() {
+        WorkerType toReturn = new WorkerType();
+        toReturn.setDescription(String.valueOf(getDescription()));
+        toReturn.setType(String.valueOf(getType()));
+        toReturn.setCooldown(getCooldown());
+        return toReturn;
+    }
 }

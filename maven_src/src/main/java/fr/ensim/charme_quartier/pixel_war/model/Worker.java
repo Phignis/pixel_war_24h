@@ -54,8 +54,21 @@ public class Worker {
         if(Instant.parse(getDateDernierPixelPose()).plus(Duration.ofSeconds(type.getCooldown())).isAfter(now)){
             return true;
         }
-        else{
+        else {
             return false;
         }
+    }
+
+    /**
+     * perform a deep copy
+     * @return a deep copy of current object
+     */
+    public Worker copy() {
+        Worker toReturn = new Worker();
+        toReturn.setId(getId());
+        toReturn.setType(getType().copy());
+        toReturn.setEquipeProprietaire(getEquipeProprietaire());
+        toReturn.setDateDernierPixelPose(String.valueOf(getDateDernierPixelPose()));
+        return toReturn;
     }
 }

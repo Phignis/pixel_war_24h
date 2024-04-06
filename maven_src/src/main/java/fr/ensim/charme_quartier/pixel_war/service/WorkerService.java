@@ -30,4 +30,15 @@ public class WorkerService {
         return response.getBody();
     }
 
+    public Worker getAvailableWorker(Worker[] workers) {
+        int indexWorker = 0;
+
+        while (workers[indexWorker].IsOnCooldown()) {
+            indexWorker = (indexWorker + 1) % (workers.length - 1);
+            System.out.println("worker : " + workers[indexWorker].getId());
+            System.out.println(workers[indexWorker].getDateDernierPixelPose());
+        }
+        return null;
+    }
+
 }
