@@ -13,10 +13,10 @@ import java.util.Arrays;
 @RestController
 public class WorkerController {
     @Autowired
-    public AuthentifierService as;
+    private AuthentifierService as;
 
     @Autowired
-    public WorkerService ws;
+    private WorkerService ws;
 
     @GetMapping("workers")
     public String getTeamWorkers(RestTemplate restTemplate) {
