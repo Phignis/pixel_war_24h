@@ -2,6 +2,7 @@ package fr.ensim.charme_quartier.pixel_war.service;
 
 import fr.ensim.charme_quartier.pixel_war.model.Canvas;
 import fr.ensim.charme_quartier.pixel_war.model.CanvasData;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Service
 public class CanvasService {
@@ -59,7 +61,7 @@ public class CanvasService {
         if(response.getBody() == null) throw new IllegalStateException("response is null");
 
         InputStream is = new ByteArrayInputStream(response.getBody());
-        BufferedImage bi = ImageIO.read(is);
-        return bi;
+        BufferedImage newBi = ImageIO.read(is);
+        return newBi;
     }
 }

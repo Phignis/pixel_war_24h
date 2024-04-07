@@ -6,13 +6,13 @@
     </head>
     <body>
     <h1>Place a pixel!</h1>
-    <table>;
+    <table>
     <span th:each="i: ${#numbers.sequence(0, canva.getWidth() - 1)}">
-     <td>
-      <tr th:each="j: ${#numbers.sequence(0, canva.getHeight() - 1)}">
-        <p th:style="${canva.getRGB(i,j)}"></p>
-      </tr>
-
+        <td>
+            <tr th:each="j: ${#numbers.sequence(0, canva.getHeight() - 1)}">
+                <p th:value="${canva.getRGB(i,j)}"></p>
+            </tr>
+        </td>
     </span>
     </table>
     <form method="post" action="/pixel">

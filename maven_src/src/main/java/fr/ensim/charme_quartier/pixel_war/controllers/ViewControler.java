@@ -10,7 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 @Controller
@@ -27,6 +29,11 @@ public class ViewControler {
         String cdId = cs.getcanvasdataid(rt, ts.getToken(rt),c.getNom());
         System.out.println("récupération du canva : dataid = " + cdId);
         BufferedImage bi = cs.getcanvaspixels(rt, ts.getToken(rt), cdId);
+        System.out.println("canva : "+ bi);
+
+        File outputfile = new File("image.jpg");
+        ImageIO.write(bi, "jpg", outputfile);
+
 
         model.addAttribute("canva", bi);
 

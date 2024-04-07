@@ -109,23 +109,73 @@ public class PixelController {
 
 
     }
+    public String putPixelabs(@RequestParam(name="x_coord", required = true) int xCoord,
+                           @RequestParam(name="y_coord", required = true) int yCoord,
+                           @RequestParam(name="color", required = true) EUseableColors color,
+                           RestTemplate restTemplate, Point offset) {
+
+
+        String token = as.getToken(restTemplate);
+        int teamId = as.getTeamId(restTemplate, TEAM_NAME, token);
+        Worker[] workers = ws.getWorkersOf(restTemplate, token, teamId);
+
+        HttpHeaders h = new HttpHeaders();
+        h.setBearerAuth(token);
+        h.add("Content-Type", MediaType.APPLICATION_JSON.toString());
+
+        Worker selectedWorker = ws.getAvailableWorker(workers);
+
+        String url = "http://149.202.79.34:8085/api/equipes/" + teamId + "/workers/" + selectedWorker.getId() + "/pixel";
+
+        // TODO: move this algorithm so service
+        int chunkId = -1;
+
+        Canvas canva = cs.getCanvaOf(restTemplate, token);
+        for (Chunk c : canva.getChunks()) {
+            if (c.getType().equals("privé") && c.getEquipeProprietaire() == teamId) {
+                chunkId = c.getId();
+            }
+        }
+        if (chunkId == -1) {
+            throw new IllegalStateException("chunk not found for you");
+        }
+
+        System.out.println(chunkId);
+
+        var body = new HashMap<String, Object>();
+
+        body.put("canvas", canva.getNom());
+        body.put("color", color.getKey());
+        body.put("pos_x", xCoord + offset.x);
+        body.put("pos_y", yCoord + offset.y);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(body, h), String.class);
+        return response.getBody();
+
+
+        //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, TEAM_NAME, token);
+
+
+    }
 
     @GetMapping("/jinbe")
     public String insertImage(RestTemplate restTemplate) throws IOException {
-        InputStream image = this.getClass().getClassLoader().getResourceAsStream("Gol_D._Roger_Portrait.png");
+        InputStream image = this.getClass().getClassLoader().getResourceAsStream("jinbe.jpg");
         BufferedImage bi = ImageIO.read(image);
-        BufferedImage resized = ImageUtils.resizeImage(bi, 50, 50);
+        BufferedImage resized = ImageUtils.resizeImage(bi, 100, 100);
         BufferedImage recoloredToPrint = ImageUtils.recolor(resized);
-        pis.registerProtectionFor(new CanvasCoords(0, 0, 13), recoloredToPrint);
+
+        pis.registerProtectionFor(new CanvasCoords(0, 0, 7), recoloredToPrint);
         String lastState = "";
         protect(as.getToken(restTemplate), restTemplate);
+
         for (int y = 0; y < recoloredToPrint.getHeight(); y++) {
             for (int x = 0; x < recoloredToPrint.getWidth(); x++) {
                 int rgb = recoloredToPrint.getRGB(x, y);
                 Color pixelColor = new Color(rgb);
                 EUseableColors colorName = EUseableColors.getEUseableColors(pixelColor);
                 System.out.println("Pixel at (" + x + ", " + y + ") has color: " + colorName);
-                lastState = putPixel(x, y, colorName, restTemplate);
+                lastState = putPixelabs(x, y, colorName, restTemplate, new Point(50,50));
             }
         }
         return lastState;
