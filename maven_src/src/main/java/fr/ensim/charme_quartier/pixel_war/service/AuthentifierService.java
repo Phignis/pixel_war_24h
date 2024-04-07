@@ -9,11 +9,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.security.InvalidParameterException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
 public class AuthentifierService {
-    public String getToken(RestTemplate restTemplate){
+    private AuthentifierToken token;
+    public AuthentifierToken getTokenFromAPI(RestTemplate restTemplate){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
@@ -25,7 +27,22 @@ public class AuthentifierService {
 
         String query = "http://149.202.79.34:8081/realms/codelemans/protocol/openid-connect/token";
         ResponseEntity<AuthentifierToken> response = restTemplate.postForEntity(query, map, AuthentifierToken.class);
-        return response.getBody().getAccess_token();
+        return response.getBody();
+    }
+
+    public String getToken(RestTemplate restTemplate){
+
+        if (token == null) {
+            token = getTokenFromAPI(restTemplate);
+            return token.getAccess_token();
+        }
+        if(token.getExpireTime().isAfter(LocalDateTime.now())){
+            return token.getAccess_token();
+        }
+        else{
+            token = getTokenFromAPI(restTemplate);
+            return token.getAccess_token();
+        }
     }
 
     public int getTeamId(RestTemplate restTemplate, String teamName, String token) throws InvalidParameterException {
