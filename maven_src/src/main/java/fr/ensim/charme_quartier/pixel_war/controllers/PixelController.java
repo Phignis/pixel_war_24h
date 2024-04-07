@@ -1,23 +1,24 @@
 package fr.ensim.charme_quartier.pixel_war.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.ensim.charme_quartier.pixel_war.model.*;
 import fr.ensim.charme_quartier.pixel_war.model.Canvas;
-import fr.ensim.charme_quartier.pixel_war.model.Chunk;
-import fr.ensim.charme_quartier.pixel_war.model.EUseableColors;
-import fr.ensim.charme_quartier.pixel_war.model.Worker;
 import fr.ensim.charme_quartier.pixel_war.service.AuthentifierService;
 import fr.ensim.charme_quartier.pixel_war.service.CanvasService;
-import fr.ensim.charme_quartier.pixel_war.utils.ImageUtils;
+import fr.ensim.charme_quartier.pixel_war.service.ProtectImageService;
 import fr.ensim.charme_quartier.pixel_war.service.WorkerService;
+import fr.ensim.charme_quartier.pixel_war.utils.ImageUtils;
+import io.socket.client.IO;
+import io.socket.emitter.Emitter;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import javax.imageio.ImageIO;
@@ -25,19 +26,31 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
+
+import io.socket.client.Socket;
+
+import static java.util.Collections.singletonMap;
 
 @Controller
 public class PixelController {
     @Autowired
-    AuthentifierService as;
+    private AuthentifierService as;
 
     @Autowired
-    WorkerService ws;
+    private WorkerService ws;
 
     @Autowired
-    CanvasService cs;
+    private CanvasService cs;
+
+    @Autowired
+    private ProtectImageService pis;
+
+    private static Socket socket;
+
+    private static final String TEAM_NAME = "Le charme du quartier";
 
     @GetMapping("/")
     public String displayHome(Model model) {
@@ -54,7 +67,7 @@ public class PixelController {
 
 
         String token = as.getToken(restTemplate);
-        int teamId = as.getTeamId(restTemplate, "Le charme du quartier", token);
+        int teamId = as.getTeamId(restTemplate, TEAM_NAME, token);
         Worker[] workers = ws.getWorkersOf(restTemplate, token, teamId);
 
         HttpHeaders h = new HttpHeaders();
@@ -83,8 +96,8 @@ public class PixelController {
         var body = new HashMap<String, Object>();
 
         body.put("canvas", canva.getNom());
-        body.put("chunk", chunkId);
-        body.put("color", color);
+        body.put("chunk", 13);
+        body.put("color", color.getKey());
         body.put("pos_x", xCoord);
         body.put("pos_y", yCoord);
 
@@ -92,7 +105,7 @@ public class PixelController {
         return response.getBody();
 
 
-        //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
+        //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, TEAM_NAME, token);
 
 
     }
@@ -101,9 +114,11 @@ public class PixelController {
     public String insertImage(RestTemplate restTemplate) throws IOException {
         InputStream image = this.getClass().getClassLoader().getResourceAsStream("Gol_D._Roger_Portrait.png");
         BufferedImage bi = ImageIO.read(image);
-        BufferedImage rezized = ImageUtils.resizeImage(bi, 50, 50);
-        BufferedImage recoloredToPrint = ImageUtils.recolor(rezized);
+        BufferedImage resized = ImageUtils.resizeImage(bi, 50, 50);
+        BufferedImage recoloredToPrint = ImageUtils.recolor(resized);
+        pis.registerProtectionFor(new CanvasCoords(0, 0, 13), recoloredToPrint);
         String lastState = "";
+        protect(as.getToken(restTemplate), restTemplate);
         for (int y = 0; y < recoloredToPrint.getHeight(); y++) {
             for (int x = 0; x < recoloredToPrint.getWidth(); x++) {
                 int rgb = recoloredToPrint.getRGB(x, y);
@@ -113,7 +128,6 @@ public class PixelController {
                 lastState = putPixel(x, y, colorName, restTemplate);
             }
         }
-
         return lastState;
 
     }
@@ -123,5 +137,36 @@ public class PixelController {
         return as.getToken(restTemplate);
     }
 
+    @GetMapping("/protect")
+    public String protect(String token, RestTemplate rt) {
+        Canvas canva = cs.getCanvaOf(rt, token);
+        int teamId = as.getTeamId(rt, TEAM_NAME, token);
+        Worker[] workers = ws.getWorkersOf(rt, token, 4);
+
+        URI uri = URI.create("http://149.202.79.34:8085/api/socket");
+        IO.Options options = IO.Options.builder()
+                .setAuth(singletonMap("token", token))
+                .build();
+
+        socket = IO.socket(uri, options);
+        socket.on("pixelUpdated", (Object... responses) -> {
+            System.out.println(Arrays.toString(responses));
+            PixelUpdatedResponse p = null;
+            try {
+                p = new ObjectMapper().readValue(((JSONObject) responses[0]).toString(), PixelUpdatedResponse.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            CanvasCoords trigerringCoord = new CanvasCoords(p.getX(), p.getY());
+            Color c = new Color(p.getRgb()[0], p.getRgb()[1], p.getRgb()[2]);
+            EUseableColors color = EUseableColors.getEUseableColors(c);
+            Worker wToUse = ws.getAvailableWorker(workers);
+
+            assert color != null;
+            pis.triggerProtection(trigerringCoord, color, token, wToUse.getId(), canva.getNom());
+        });
+        socket.connect();
+        return "index";
+    }
 
 }
