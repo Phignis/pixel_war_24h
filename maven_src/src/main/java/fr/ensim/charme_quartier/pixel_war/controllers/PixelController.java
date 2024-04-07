@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Random;
 
 @RestController
 public class PixelController {
@@ -32,7 +33,52 @@ public class PixelController {
     CanvasService cs;
 
     @GetMapping("/")
-    public String putPixel(RestTemplate restTemplate, int X, int Y, String PixelColor) {
+    public String putPixelChunk(RestTemplate restTemplate, int X, int Y, String PixelColor, int chunkid) {
+        String token = as.getToken(restTemplate);
+        int teamId = as.getTeamId(restTemplate, "Le charme du quartier", token);
+        Worker[] workers = ws.getWorkersOf(restTemplate, token, teamId);
+
+        HttpHeaders h = new org.springframework.http.HttpHeaders();
+        h.setBearerAuth(token);
+        h.add("Content-Type", MediaType.APPLICATION_JSON.toString());
+
+        Worker selectedWorker = ws.getAvailableWorker(workers);
+
+        String url = "http://149.202.79.34:8085/api/equipes/" + teamId + "/workers/" + selectedWorker.getId() + "/pixel";
+
+        // TODO: move this algorithm so service
+        //int chunkId = -1;
+
+        Canvas canva = cs.getCanvaOf(restTemplate, token);
+        /*for (Chunk c : canva.getChunks()) {
+            if (c.getType().equals("privé") && c.getEquipeProprietaire() == teamId) {
+                chunkId = c.getId();
+            }
+        }
+        if (chunkId == -1) {
+            throw new IllegalStateException("chunk not found for you");
+        }*/
+
+        System.out.println(chunkid);
+
+        var body = new HashMap<String, Object>();
+
+        body.put("canvas", canva.getNom());
+        body.put("chunk", chunkid);
+        body.put("color", PixelColor);
+        body.put("pos_x", X);
+        body.put("pos_y", Y);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(body, h), String.class);
+        return response.getBody();
+
+
+        //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
+
+
+    }
+
+    public String putPixelabsolu(RestTemplate restTemplate, int X, int Y, String PixelColor, Point offset) {
         String token = as.getToken(restTemplate);
         int teamId = as.getTeamId(restTemplate, "Le charme du quartier", token);
         Worker[] workers = ws.getWorkersOf(restTemplate, token, teamId);
@@ -63,23 +109,30 @@ public class PixelController {
         var body = new HashMap<String, Object>();
 
         body.put("canvas", canva.getNom());
-        body.put("chunk", chunkId);
         body.put("color", PixelColor);
-        body.put("pos_x", X);
-        body.put("pos_y", Y);
+        body.put("pos_x", X+ offset.x);
+        body.put("pos_y", Y+ offset.y);
 
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(body, h), String.class);
         return response.getBody();
 
 
         //return response.getBody() + " TEAM ID : " + as.getTeamId(restTemplate, "Le charme du quartier", token);
-
-
     }
 
-    @GetMapping("/jinbe")
+    @GetMapping("/attack")
+    public void attack(RestTemplate restTemplate) {
+        Random r = new Random();
+        while(true) {
+            int x = r.nextInt(50);
+            int y = r.nextInt(50);
+            System.out.println("x: " + x + " y : " + y);
+            putPixelChunk(restTemplate, x, y, EUseableColors.FOREST_GREEN.getKey(), 18);
+        }
+    }
+    @GetMapping("/desine")
     public String insertImage(RestTemplate restTemplate) throws IOException {
-        InputStream image = this.getClass().getClassLoader().getResourceAsStream("Gol_D._Roger_Portrait.png");
+        InputStream image = this.getClass().getClassLoader().getResourceAsStream("draco.jpg");
         BufferedImage bi = ImageIO.read(image);
         BufferedImage rezized = ImageUtils.resizeImage(bi, 50, 50);
         BufferedImage recoloredToPrint = ImageUtils.recolor(rezized);
@@ -90,7 +143,8 @@ public class PixelController {
                 Color pixelColor = new Color(rgb);
                 String colorName = EUseableColors.findColorName(pixelColor);
                 System.out.println("Pixel at (" + x + ", " + y + ") has color: " + colorName);
-                lastState = putPixel(restTemplate, x, y, colorName);
+                //lastState = putPixelabsolu(restTemplate, x, y, colorName, new Point(50,50));
+                lastState = putPixelChunk(restTemplate, x, y, colorName, 13);
             }
         }
 

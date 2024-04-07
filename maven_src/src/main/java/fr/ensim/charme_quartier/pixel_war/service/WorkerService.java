@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class WorkerService {
+    int indexWorker = 0;
     public Worker[] getWorkersOf(RestTemplate restTemplate, String token, int teamId) throws IllegalStateException {
         String url = "http://149.202.79.34:8085/api/equipes/" + teamId;
         HttpHeaders h = new org.springframework.http.HttpHeaders();
@@ -31,14 +32,13 @@ public class WorkerService {
     }
 
     public Worker getAvailableWorker(Worker[] workers) {
-        int indexWorker = 0;
 
         while (workers[indexWorker].IsOnCooldown()) {
             indexWorker = (indexWorker + 1) % (workers.length - 1);
             System.out.println("worker : " + workers[indexWorker].getId());
             System.out.println(workers[indexWorker].getDateDernierPixelPose());
         }
-        return null;
+        return workers[indexWorker];
     }
 
 }
