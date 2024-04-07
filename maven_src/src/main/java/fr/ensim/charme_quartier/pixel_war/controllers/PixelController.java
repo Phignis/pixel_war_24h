@@ -19,12 +19,16 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.HashMap;
 
@@ -47,9 +51,9 @@ public class PixelController {
     }
 
     @PostMapping("/pixel")
-    public String putPixel(@RequestParam(name="x_coord", required = true) int xCoord,
-                           @RequestParam(name="y_coord", required = true) int yCoord,
-                           @RequestParam(name="color", required = true) EUseableColors color,
+    public String putPixel(@RequestParam(name = "x_coord", required = true) int xCoord,
+                           @RequestParam(name = "y_coord", required = true) int yCoord,
+                           @RequestParam(name = "color", required = true) EUseableColors color,
                            RestTemplate restTemplate) {
 
 
@@ -123,5 +127,33 @@ public class PixelController {
         return as.getToken(restTemplate);
     }
 
+
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+
+    @GetMapping("/uploadimage")
+    public String displayUploadForm() {
+        return "imageupload/index";
+    }
+
+    @RequestMapping("/upload")
+    public String uploadImage(Model model, @RequestParam("image") MultipartFile file) throws IOException {
+        StringBuilder fileNames = new StringBuilder();
+        Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, file.getOriginalFilename());
+        fileNames.append(file.getOriginalFilename());
+        Files.write(fileNameAndPath, file.getBytes());
+        model.addAttribute("msg", "Uploaded images: " + fileNames.toString());
+        return "index";
+    }
+
+    @GetMapping("/index")
+    public String index(){
+        return "index";
+    }
+
+    @PostMapping("/index")
+    public String uploadImage(@ModelAttribute("image") BufferedImage image) {
+
+        return "redirect:someOtherPage";
+    }
 
 }

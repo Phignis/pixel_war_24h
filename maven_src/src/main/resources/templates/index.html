@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Pixel War 24h</title>
@@ -13,7 +13,9 @@
             <input name="color" type="radio" th:value="${color}">
             <div th:text="${color}"></div>
         </div>
+        <input type="file" id="image" name="image" accept="image/png, image/jpeg" />
         <button type="submit">SUBMIT</button>
     </form>
+
 </body>
 </html>
